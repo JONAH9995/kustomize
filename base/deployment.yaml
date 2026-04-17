@@ -19,7 +19,28 @@ spec:
         - name: ghcr-secret
       containers:
         - name: springboot
-          image: ghcr.io/jonah9995/spring-petclinic:latest
-          env:
-            - name: SERVER_SERVLET_CONTEXT_PATH # On force le contexte de l'application à tp6
-              value: "/tp6"
+          image: ghcr.io/<VOTRE_USER_GITHUB>/spring-petclinic:4.0.0-SNAPSHOT
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            timeoutSeconds: 2
+            periodSeconds: 10
+            initialDelaySeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            timeoutSeconds: 2
+            periodSeconds: 10
+            initialDelaySeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            timeoutSeconds: 2
+            periodSeconds: 10
+            initialDelaySeconds: 20
+            failureThreshold: 6
